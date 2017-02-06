@@ -1,11 +1,12 @@
-## various attributes of the capture, and reads in a loop,                                                                                           
+## various attributes of the capture, and reads in a loop,
 ## Then prints the volume.
 ##
 ## To test it out, run it and shout at your microphone:
 
 import alsaaudio, time, audioop
-import sys 
+import sys
 import getopt
+import requests
 
 def usage():
     print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     opts, args = getopt.getopt(sys.argv[1:], 'c:')
     for o, a in opts:
         if o == '-c':
-            card = a 
+            card = a
 
 # Open the device in nonblocking capture mode. The last argument could
 # just as well have been zero for blocking mode. Then we could have
@@ -41,6 +42,8 @@ if __name__ == '__main__':
 
     max = 0
     tmp = [0] * 5000
+    threshold = 700
+    sound_on = false
     while True:
         # Read data from device
         l,data = inp.read()
@@ -50,13 +53,18 @@ if __name__ == '__main__':
           current = audioop.max(data, 2)
           tmp = tmp[1:]
           tmp.append(current)
-          
+
           avg = sum(tmp) / len(tmp)
           if max < current:
             max = current
-          if avg > 400:
+          if avg > threshold:
             print(current)
+            if !sound_on
+              sound_on = true
+              #requests.post('http://kraken.test.io/events', data={ 'event': 'over_volume_threshold', 'threshold': threshold })
+          else
+            if sound_on
+              sound_on = false
+              #requests.post('http://kraken.test.io/events', data={ 'event': 'below_volume_threshold', 'threshold': threshold })
 
           time.sleep(.001)
-
-
