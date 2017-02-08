@@ -139,6 +139,6 @@ if __name__ == '__main__':
 
             print("{0} / {1}".format(threshold, len(noise_level_buffer)))
             time.sleep(.001)
-          except audioop.error, e:
+          except audioop.error as e:
             if e.message != "not a whole number of frames":
               raise e
