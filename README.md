@@ -4,6 +4,8 @@
 
 * [ ] `sudo apt-get install ruby`
 
+* [ ] `sudo apt-get install ruby-dev`
+
 * [ ] `sudo gem install god`
 
 * [ ] install [pigpio](http://abyz.co.uk/rpi/pigpio/download.html)
