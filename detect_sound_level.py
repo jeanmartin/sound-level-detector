@@ -117,24 +117,28 @@ if __name__ == '__main__':
         update_noise_level_buffer()
 
         if l:
-        # Return the maximum of the absolute value of all samples in a fragment.
-          current = audioop.max(data, 2)
-          noise_level_buffer = noise_level_buffer[1:]
-          noise_level_buffer.append(current)
+          try:
+            # Return the maximum of the absolute value of all samples in a fragment.
+            current = audioop.max(data, 2)
+            noise_level_buffer = noise_level_buffer[1:]
+            noise_level_buffer.append(current)
 
-          avg = sum(noise_level_buffer) / len(noise_level_buffer)
-          if max < current:
-            max = current
-          if avg > threshold:
-            if not sound_on:
-              sound_on = True
-              led_on()
-              #requests.post('http://kraken.test.io/events', data={ 'event': 'over_volume_threshold', 'threshold': threshold })
-          else:
-            if sound_on:
-              sound_on = False
-              led_off()
-              #requests.post('http://kraken.test.io/events', data={ 'event': 'below_volume_threshold', 'threshold': threshold })
+            avg = sum(noise_level_buffer) / len(noise_level_buffer)
+            if max < current:
+              max = current
+            if avg > threshold:
+              if not sound_on:
+                sound_on = True
+                led_on()
+                #requests.post('http://kraken.test.io/events', data={ 'event': 'over_volume_threshold', 'threshold': threshold })
+            else:
+              if sound_on:
+                sound_on = False
+                led_off()
+                #requests.post('http://kraken.test.io/events', data={ 'event': 'below_volume_threshold', 'threshold': threshold })
 
-          print("{0} / {1}".format(threshold, len(noise_level_buffer)))
-          time.sleep(.001)
+            print("{0} / {1}".format(threshold, len(noise_level_buffer)))
+            time.sleep(.001)
+          except audioop.error, e:
+            if e.message != "not a whole number of frames":
+              raise e
