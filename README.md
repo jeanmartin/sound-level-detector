@@ -2,6 +2,16 @@
 
 ## Setup
 
+* [ ] `sudo apt-get install screen`
+
+* [ ] Apply screenrc
+
+    ```
+    cd /etc/
+    sudo rm screenrc
+    sudo wget https://raw.githubusercontent.com/testCloud/sound-level-detector/master/screenrc
+    ```
+
 * [ ] `sudo apt-get install ruby`
 
 * [ ] `sudo apt-get install ruby-dev`
