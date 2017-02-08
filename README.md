@@ -2,6 +2,10 @@
 
 ## Setup
 
+* [ ] `sudo apt-get install ruby`
+
+* [ ] `sudo gem install god`
+
 * [ ] install [pigpio](http://abyz.co.uk/rpi/pigpio/download.html)
 
     ```
