@@ -13,7 +13,7 @@
     ```
 * [ ] install [RPi.GPIO](https://pypi.python.org/pypi/RPi.GPIO)
 
-   ``sudo apt-get install python3-rpi.gpio``
+* [ ] `sudo apt-get install python3-rpi.gpio`
 
 * [ ] `sudo pip3 install requests-futures`
 
