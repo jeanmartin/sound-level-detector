@@ -34,6 +34,41 @@
 
 * [ ] `sudo pip3 install alsaaudio`
 
+### Activate I2C pins
+
+* execute `i2cdetect -y 1`
+
+    Unless you see this:
+
+    ```         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- 27 -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --
+    ```
+
+    do:
+
+    `sudo usermod -aG i2c pi`
+
+    then edit:
+
+    uncomment the line `dtparam=i2c_arm=on` in /boot/config.txt
+
+    ```sudo su
+    echo i2c-dev >> /etc/modules
+    ```
+
+    `sudo reboot`
+
+    `ls /dev/` and check if you see "i2c-1"
+
+### Almost done!
+
 * [ ] put detect_sound_level.py into ~/sound
 
     ```
