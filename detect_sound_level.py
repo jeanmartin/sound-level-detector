@@ -4,10 +4,12 @@
 ## To test it out, run it and shout at your microphone:
 
 import alsaaudio, time, audioop
+from requests_futures.sessions import FuturesSession
 import sys
 import getopt
 import requests
 import pigpio
+import json
 from RPi import GPIO
 
 def usage():
@@ -15,6 +17,8 @@ def usage():
     sys.exit(2)
 
 if __name__ == '__main__':
+
+    session = FuturesSession()
 
     card = 'front:CARD=GoMic,DEV=0'
 
@@ -36,7 +40,7 @@ if __name__ == '__main__':
     re1_clkLastState = GPIO.input(re1_clk)
 
     re2_clk = 19
-    re2_dt = 16
+        re2_dt = 16
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(re2_clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(re2_dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -120,6 +124,25 @@ if __name__ == '__main__':
           try:
             # Return the maximum of the absolute value of all samples in a fragment.
             current = audioop.max(data, 2)
+    inp.setperiodsize(160)
+
+    led_off()
+
+    max = 0
+    noise_level_buffer = [0] * 5000
+    threshold = 700
+    sound_on = False
+    while True:
+        # Read data from device
+        l,data = inp.read()
+
+        update_threshold()
+        update_noise_level_buffer()
+
+        if l:
+          try:
+            # Return the maximum of the absolute value of all samples in a fragment.
+            current = audioop.max(data, 2)
             noise_level_buffer = noise_level_buffer[1:]
             noise_level_buffer.append(current)
 
@@ -130,15 +153,15 @@ if __name__ == '__main__':
               if not sound_on:
                 sound_on = True
                 led_on()
-                #requests.post('http://kraken.test.io/events', data={ 'event': 'over_volume_threshold', 'threshold': threshold })
+                session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'over_volume_threshold', 'payload': { 'threshold': threshold } } }))
             else:
               if sound_on:
                 sound_on = False
                 led_off()
-                #requests.post('http://kraken.test.io/events', data={ 'event': 'below_volume_threshold', 'threshold': threshold })
+                session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'below_volume_threshold', 'payload': { 'threshold': threshold } } }))
 
             print("{0} / {1}".format(threshold, len(noise_level_buffer)))
             time.sleep(.001)
           except audioop.error as e:
-            if e.message != "not a whole number of frames":
+            if "{0}".format(e) != "not a whole number of frames":
               raise e
