@@ -65,6 +65,8 @@
 
     `sudo reboot`
 
+    `sudo apt-get install python3-smbus`
+
     `ls /dev/` and check if you see "i2c-1"
 
 ### Almost done!
