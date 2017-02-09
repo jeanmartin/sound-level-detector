@@ -12,12 +12,18 @@ import requests
 import pigpio
 import json
 from RPi import GPIO
+import threading
+from queue import Queue
+import time
 
 def usage():
     print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
     sys.exit(2)
 
 if __name__ == '__main__':
+
+    lock = threading.Lock()
+    q = Queue()
 
     session = FuturesSession()
 
@@ -49,9 +55,27 @@ if __name__ == '__main__':
     GPIO.setup(re2_dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     re2_clkLastState = GPIO.input(re2_clk)
 
+    def write_to_lcd(data):
+        row, column, value = data
+        with lock:
+            LCD1602.write(row, column, "                ")
+            LCD1602.write(row, column, value)
+
+    def worker():
+        while True:
+            item = q.get()
+            write_to_lcd(item)
+            q.task_done()
+
+    #for i in range(2):
+    t = threading.Thread(target=worker)
+    t.daemon = True  # thread dies when main thread (only non-daemon thread) exits.
+    t.start()
+
     def update_threshold(step=50):
         global re1_clkLastState
         global threshold
+        global s
         re1_clkState = GPIO.input(re1_clk)
         re1_dtState = GPIO.input(re1_dt)
         if re1_clkState != re1_clkLastState:
@@ -62,6 +86,8 @@ if __name__ == '__main__':
                     threshold -= step
                 else:
                     threshold = 0
+            q.queue.clear()
+            q.put([0, 0, "THR: {0}".format(threshold)])
 
         re1_clkLastState = re1_clkState
 
@@ -78,6 +104,8 @@ if __name__ == '__main__':
                     noise_level_buffer = noise_level_buffer[time:]
                 else:
                     noise_level_buffer = noise_level_buffer[-1:]
+            q.queue.clear()
+            q.put([0, 1, "NLB: {0}".format(len(noise_level_buffer))])
 
         re2_clkLastState = re2_clkState
 
@@ -116,6 +144,8 @@ if __name__ == '__main__':
     noise_level_buffer = [0] * 5000
     threshold = 700
     sound_on = False
+    q.put([0, 0, "THR: {0}".format(threshold)])
+    q.put([0, 1, "NLB: {0}".format(len(noise_level_buffer))])
     while True:
         # Read data from device
         l,data = inp.read()
@@ -144,8 +174,7 @@ if __name__ == '__main__':
                 led_off()
                 session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'below_volume_threshold', 'payload': { 'threshold': threshold } } }))
 
-            #print("{0} / {1}".format(threshold, len(noise_level_buffer)))
-            LCD1602.write(0, 0, "{0} / {1}".format(threshold, len(noise_level_buffer)))
+            print("{0} / {1}".format(threshold, len(noise_level_buffer)))
             time.sleep(.001)
           except audioop.error as e:
             if "{0}".format(e) != "not a whole number of frames":
