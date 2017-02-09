@@ -1,11 +1,17 @@
-## various attributes of the capture, and reads in a loop,                                                                                           
+## various attributes of the capture, and reads in a loop,
 ## Then prints the volume.
 ##
 ## To test it out, run it and shout at your microphone:
 
 import alsaaudio, time, audioop
-import sys 
+from requests_futures.sessions import FuturesSession
+import LCD1602
+import sys
 import getopt
+import requests
+import pigpio
+import json
+from RPi import GPIO
 
 def usage():
     print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
@@ -13,12 +19,77 @@ def usage():
 
 if __name__ == '__main__':
 
+    session = FuturesSession()
+
+    LCD1602.init(0x27,1)
+
     card = 'front:CARD=GoMic,DEV=0'
 
     opts, args = getopt.getopt(sys.argv[1:], 'c:')
     for o, a in opts:
         if o == '-c':
-            card = a 
+            card = a
+
+    pi = pigpio.pi()
+    led_r = 17
+    led_g = 22
+    led_b = 24
+
+    re1_clk = 20
+    re1_dt = 21
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(re1_clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(re1_dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    re1_clkLastState = GPIO.input(re1_clk)
+
+    re2_clk = 19
+    re2_dt = 16
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(re2_clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(re2_dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    re2_clkLastState = GPIO.input(re2_clk)
+
+    def update_threshold(step=50):
+        global re1_clkLastState
+        global threshold
+        re1_clkState = GPIO.input(re1_clk)
+        re1_dtState = GPIO.input(re1_dt)
+        if re1_clkState != re1_clkLastState:
+            if re1_dtState != re1_clkState:
+                threshold += step
+            else:
+                if threshold >= step:
+                    threshold -= step
+                else:
+                    threshold = 0
+
+        re1_clkLastState = re1_clkState
+
+    def update_noise_level_buffer(time=100):
+        global re2_clkLastState
+        global noise_level_buffer
+        re2_clkState = GPIO.input(re2_clk)
+        re2_dtState = GPIO.input(re2_dt)
+        if re2_clkState != re2_clkLastState:
+            if re2_dtState != re2_clkState:
+                noise_level_buffer = ([0] * time) + noise_level_buffer
+            else:
+                if len(noise_level_buffer) >= time+1:
+                    noise_level_buffer = noise_level_buffer[time:]
+                else:
+                    noise_level_buffer = noise_level_buffer[-1:]
+
+        re2_clkLastState = re2_clkState
+
+    def led_on():
+        pi.set_PWM_dutycycle(led_r, 255)
+        pi.set_PWM_dutycycle(led_g, 0)
+        pi.set_PWM_dutycycle(led_b, 0)
+
+    def led_off():
+        pi.set_PWM_dutycycle(led_r, 0)
+        pi.set_PWM_dutycycle(led_g, 0)
+        pi.set_PWM_dutycycle(led_b, 0)
 
 # Open the device in nonblocking capture mode. The last argument could
 # just as well have been zero for blocking mode. Then we could have
@@ -39,24 +110,44 @@ if __name__ == '__main__':
 # mode.
     inp.setperiodsize(160)
 
+    led_off()
+
     max = 0
-    tmp = [0] * 5000
+    noise_level_buffer = [0] * 5000
+    threshold = 700
+    sound_on = False
     while True:
         # Read data from device
         l,data = inp.read()
 
+        update_threshold()
+        update_noise_level_buffer()
+
         if l:
-        # Return the maximum of the absolute value of all samples in a fragment.
-          current = audioop.max(data, 2)
-          tmp = tmp[1:]
-          tmp.append(current)
-          
-          avg = sum(tmp) / len(tmp)
-          if max < current:
-            max = current
-          if avg > 400:
-            print(current)
+          try:
+            # Return the maximum of the absolute value of all samples in a fragment.
+            current = audioop.max(data, 2)
+            noise_level_buffer = noise_level_buffer[1:]
+            noise_level_buffer.append(current)
 
-          time.sleep(.001)
+            avg = sum(noise_level_buffer) / len(noise_level_buffer)
+            if max < current:
+              max = current
+            if avg > threshold:
+              if not sound_on:
+                sound_on = True
+                led_on()
+                session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'over_volume_threshold', 'payload': { 'threshold': threshold } } }))
+            else:
+              if sound_on:
+                sound_on = False
+                led_off()
+                session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'below_volume_threshold', 'payload': { 'threshold': threshold } } }))
 
+            #print("{0} / {1}".format(threshold, len(noise_level_buffer)))
+            LCD1602.write(0, 0, "{0} / {1}".format(threshold, len(noise_level_buffer)))
+            time.sleep(.001)
+          except audioop.error as e:
+            if "{0}".format(e) != "not a whole number of frames":
+              raise e
 
