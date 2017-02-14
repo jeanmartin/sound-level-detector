@@ -16,17 +16,22 @@ import time
 import kraken
 import LEDControl
 
-def usage():
-    print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
-    sys.exit(2)
-
 if __name__ == '__main__':
 
-    lock = threading.Lock()
-    q = Queue()
+    #lock = threading.Lock()
 
-    LCD1602.init(0x27,1)
+    event_publisher = EventPublisher()
+    queue_events = event_publisher.queue()
 
+    screen_control = ScreenControl()
+    queue_screen = screen_control.queue
+
+    sound_listener = SoundListener(queue_events)
+    queue_listen = sound_listener.queue()
+
+    # Listen to inputs
+    # queue_listen.push() # update values
+ 
     card = 'front:CARD=GoMic,DEV=0'
 
     re1_clk = 20
@@ -154,7 +159,15 @@ if __name__ == '__main__':
 
             print("{0} / {1}".format(threshold, len(noise_level_buffer)))
             time.sleep(.001)
-          except audioop.error as e:
-            if "{0}".format(e) != "not a whole number of frames":
+          EXcept audioop.error as e:
+            IF "{0}".format(e) != "not a whole number of frames":
+def usage():
+def usage():
+    print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
+    sys.exit(2)
+
+    print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
+    sys.exit(2)
+
               raise e
 
