@@ -14,6 +14,7 @@ import threading
 from queue import Queue
 import time
 import kraken
+import LEDControl
 
 def usage():
     print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
@@ -27,16 +28,6 @@ if __name__ == '__main__':
     LCD1602.init(0x27,1)
 
     card = 'front:CARD=GoMic,DEV=0'
-
-    opts, args = getopt.getopt(sys.argv[1:], 'c:')
-    for o, a in opts:
-        if o == '-c':
-            card = a
-
-    pi = pigpio.pi()
-    led_r = 17
-    led_g = 22
-    led_b = 24
 
     re1_clk = 20
     re1_dt = 21
@@ -106,16 +97,6 @@ if __name__ == '__main__':
 
         re2_clkLastState = re2_clkState
 
-    def led_on():
-        pi.set_PWM_dutycycle(led_r, 255)
-        pi.set_PWM_dutycycle(led_g, 0)
-        pi.set_PWM_dutycycle(led_b, 0)
-
-    def led_off():
-        pi.set_PWM_dutycycle(led_r, 0)
-        pi.set_PWM_dutycycle(led_g, 0)
-        pi.set_PWM_dutycycle(led_b, 0)
-
 # Open the device in nonblocking capture mode. The last argument could
 # just as well have been zero for blocking mode. Then we could have
 # left out the sleep call in the bottom of the loop
@@ -135,7 +116,7 @@ if __name__ == '__main__':
 # mode.
     inp.setperiodsize(160)
 
-    led_off()
+    LEDControl.initialize()
 
     max = 0
     noise_level_buffer = [0] * 5000
@@ -163,12 +144,12 @@ if __name__ == '__main__':
             if avg > threshold:
               if not sound_on:
                 sound_on = True
-                led_on()
+                LEDControl.led_on()
                 kraken.over_volume_threshold(threshold)	
             else:
               if sound_on:
                 sound_on = False
-                led_off()
+                LEDControl.led_off()
                 kraken.below_volume_threshold(threshold)	
 
             print("{0} / {1}".format(threshold, len(noise_level_buffer)))
