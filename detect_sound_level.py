@@ -4,17 +4,16 @@
 ## To test it out, run it and shout at your microphone:
 
 import alsaaudio, time, audioop
-from requests_futures.sessions import FuturesSession
 import LCD1602
 import sys
 import getopt
 import requests
 import pigpio
-import json
 from RPi import GPIO
 import threading
 from queue import Queue
 import time
+import kraken
 
 def usage():
     print('usage: recordtest.py [-c <card>] <file>', file=sys.stderr)
@@ -24,8 +23,6 @@ if __name__ == '__main__':
 
     lock = threading.Lock()
     q = Queue()
-
-    session = FuturesSession()
 
     LCD1602.init(0x27,1)
 
@@ -167,12 +164,12 @@ if __name__ == '__main__':
               if not sound_on:
                 sound_on = True
                 led_on()
-                session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'over_volume_threshold', 'payload': { 'threshold': threshold } } }))
+                kraken.over_volume_threshold(threshold)	
             else:
               if sound_on:
                 sound_on = False
                 led_off()
-                session.post('http://kraken.test.io/events', data=json.dumps({ 'event': { 'name': 'below_volume_threshold', 'payload': { 'threshold': threshold } } }))
+                kraken.below_volume_threshold(threshold)	
 
             print("{0} / {1}".format(threshold, len(noise_level_buffer)))
             time.sleep(.001)
