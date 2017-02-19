@@ -1,5 +1,35 @@
 # sound-level-detector
 
+## Files and their purpose
+
+### `detect_sound_level.py`
+
+This is the main file running the event listener: It initializes all the other classes and then
+listens to all inputs from buttons & rotary encoders.
+
+You run it with: `python3 detect_sound_level.py`
+
+### `event_publisher.py`
+
+Waits for events and publishes them to [kraken](https://github.com/testCloud/kraken).
+
+### `screen_controller.py`
+
+Waits for messages to display on the screen.
+
+Imports `LCD1602.py`
+
+### `sound_listener.py`
+
+Opens the mic and listens to the volume. Triggers stuff once the threshold is reached.
+
+Imports `LEDControl.py`
+
+### The `experiments` folder
+
+... is for ... well, experiments!
+
+
 ## Setup
 
 * [ ] `sudo apt-get install screen`
