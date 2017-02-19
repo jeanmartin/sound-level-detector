@@ -2,12 +2,12 @@
 
 ## Files and their purpose
 
-### `detect_sound_level.py`
+### `app.py`
 
 This is the main file running the event listener: It initializes all the other classes and then
 listens to all inputs from buttons & rotary encoders.
 
-You run it with: `python3 detect_sound_level.py`
+You run it with: `python3 app.py`
 
 ### `event_publisher.py`
 
@@ -101,12 +101,11 @@ Imports `LEDControl.py`
 
 ### Almost done!
 
-* [ ] put detect_sound_level.py into ~/sound
+* [ ] clone the repo into ~/SLD
 
     ```
-    mkdir ~/sound
-    cd ~/sound
-    wget https://raw.githubusercontent.com/testCloud/sound-level-detector/master/detect_sound_level.py
+    cd ~
+    git clone https://github.com/testCloud/sound-level-detector.git SLD
     ```
 * [ ] start pigpiod
 
@@ -114,9 +113,9 @@ Imports `LEDControl.py`
 
 * [ ] make sure the microphone is plugged in
 
-* [ ] start detect_sound_level.py
+* [ ] start app.py
 
     ```
-    cd ~/sound
-    python3 detect_sound_level.py
+    cd ~/SLD
+    python3 app.py
     ```
