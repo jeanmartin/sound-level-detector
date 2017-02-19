@@ -8,6 +8,7 @@ class SoundListener:
 
     def __init__(self, threshold, noise_level_buffer_size, event_queue):
         self.event_queue = event_queue
+
         self.threshold = threshold
         self.noise_level_buffer_size = noise_level_buffer_size
         self.noise_level_buffer = [0] * self.noise_level_buffer_size
@@ -26,9 +27,11 @@ class SoundListener:
         self.start()
 
     def start(self):
+        # Thread 1: listen for changes in input values (sent by app.py)
         self.input_thread = Thread(target=self.input_worker)
         self.input_thread.daemon = True
         self.input_thread.start()
+        # Thread 2: listen to the mic and noise level
         self.mic_thread = Thread(target=self.mic_worker)
         self.mic_thread.daemon = True
         self.mic_thread.start()
@@ -41,9 +44,17 @@ class SoundListener:
             time.sleep(.001)
 
     def update_setting(self, type, value):
+        # as of now we consider the incoming values to be validated before
         if type == 'threshold':
             self.threshold = value
         elif type == 'noise_level_buffer_size':
+            difference = value - self.noise_level_buffer_size
+            if difference > 0:
+                # increase
+                self.noise_level_buffer = ([0] * difference) + self.noise_level_buffer
+            else:
+                # decrease
+                self.noise_level_buffer = self.noise_level_buffer[-difference:]
             self.noise_level_buffer_size = value
 
     def mic_worker(self):
@@ -70,5 +81,4 @@ class SoundListener:
                 except audioop.error as e:
                     if "{0}".format(e) != "not a whole number of frames":
                         raise e
-
-
+                    time.sleep(.001)
