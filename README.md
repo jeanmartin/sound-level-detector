@@ -88,7 +88,8 @@ Imports `LEDControl.py`
 
     then edit `/boot/config.txt`: uncomment the line `dtparam=i2c_arm=on`
 
-    ```sudo su
+    ```
+    sudo su
     echo i2c-dev >> /etc/modules
     ```
 
@@ -106,9 +107,10 @@ Imports `LEDControl.py`
     cd ~
     git clone https://github.com/testCloud/sound-level-detector.git SLD
     ```
+
 * [ ] start pigpiod
 
-    ``sudo pigpiod``
+    `sudo pigpiod`
 
 * [ ] make sure the microphone is plugged in
 
