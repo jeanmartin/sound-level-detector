@@ -36,10 +36,10 @@ class ScreenController:
             LCD1602.write(row, column, text)
 
     def validate_column_and_row(self, column, row, text):
-        if row+1 > self.ROWS || row < 0:
+        if row+1 > self.ROWS or row < 0:
             print("ScreenController#update: row ({0}) out of range (0-{1})".format(row, self.ROWS-1))
             raise
-        if column+len(text) > self.COLUMN || column < 0:
+        if column+len(text) > self.COLUMN or column < 0:
             print("ScreenController#update: column + text length ({0}) out of range (0-{1})".format(column+len(text), self.COLUMNS))
             raise
 
