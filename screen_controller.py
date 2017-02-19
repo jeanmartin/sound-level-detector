@@ -1,11 +1,12 @@
 from queue import Queue
 from threading import Thread, Lock
+from settings import Settings
 import LCD1602
 import sys, time
 
 class ScreenController:
-    COLUMNS = 16
-    ROWS = 2
+    COLUMNS = Settings.SCREEN['columns']
+    ROWS = Settings.SCREEN['rows']
 
     def __init__(self):
         self.lock = Lock()

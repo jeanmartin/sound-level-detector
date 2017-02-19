@@ -23,7 +23,9 @@ Imports `LCD1602.py`
 
 Opens the mic and listens to the volume. Triggers stuff once the threshold is reached.
 
-Imports `LEDControl.py`
+### `led_controller.py`
+
+Controls the LED strip. Provides methods to switch it on and off.
 
 ### The `experiments` folder
 

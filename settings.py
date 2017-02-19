@@ -6,5 +6,12 @@ class Settings:
         'RE_1_CLK': 20,
         'RE_1_DT': 21,
         'RE_2_CLK': 19,
-        'RE_2_DT': 16
+        'RE_2_DT': 16,
+        'LED_RED': 17,
+        'LED_GREEN': 22,
+        'LED_BLUE': 24
+    }
+    SCREEN: {
+        'columns': 16,
+        'rows': 2
     }

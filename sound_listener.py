@@ -1,7 +1,7 @@
 from queue import Queue
 from threading import Thread
 import alsaaudio, time, audioop
-import LEDControl
+from led_controller import LEDController
 
 class SoundListener:
     CARD = 'front:CARD=GoMic,DEV=0'
@@ -21,7 +21,7 @@ class SoundListener:
 
         self.sound_on = False
 
-        LEDControl.initialize()
+        self.led_controller = LEDController()
 
         self.queue = Queue()
         self.start()
@@ -70,12 +70,12 @@ class SoundListener:
                     if avg > self.threshold:
                         if not self.sound_on:
                             self.sound_on = True
-                            LEDControl.led_on()
+                            self.led_controller.led_on()
                             self.event_queue.put(['over_volume_threshold', { 'threshold': self.threshold }])
                     else:
                         if self.sound_on:
                             self.sound_on = False
-                            LEDControl.led_off()
+                            self.led_controller.led_off()
                             self.event_queue.put(['below_volume_threshold', { 'threshold': self.threshold }])
                     time.sleep(.001)
                 except audioop.error as e:
