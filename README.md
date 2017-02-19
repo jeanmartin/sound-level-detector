@@ -70,7 +70,8 @@ Imports `LEDControl.py`
 
     Unless you see this:
 
-    ```         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+    ```
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
 00:          -- -- -- -- -- -- -- -- -- -- -- -- --
 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 20: -- -- -- -- -- -- -- 27 -- -- -- -- -- -- -- --
@@ -85,9 +86,7 @@ Imports `LEDControl.py`
 
     `sudo usermod -aG i2c pi`
 
-    then edit:
-
-    uncomment the line `dtparam=i2c_arm=on` in /boot/config.txt
+    then edit `/boot/config.txt`: uncomment the line `dtparam=i2c_arm=on`
 
     ```sudo su
     echo i2c-dev >> /etc/modules
@@ -113,9 +112,11 @@ Imports `LEDControl.py`
 
 * [ ] make sure the microphone is plugged in
 
-* [ ] start app.py
+* [ ] start the app
 
     ```
     cd ~/SLD
     python3 app.py
     ```
+
+    If you get something about "recource busy" try unplugging and plugging in the mic.
