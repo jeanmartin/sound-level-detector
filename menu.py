@@ -7,7 +7,7 @@ class Menu():
     ]
     VALUES = {
         'threshold': Settings.INITIAL_THRESHOLD,
-        'buffer_size': Settings.INITIAL_NOISE_LEVEL_BUFFER_SIZE
+        'buffer_size': Settings.INITIAL_BUFFER_SIZE
     }
     VALUE_STEPS = {
         'threshold': 50,

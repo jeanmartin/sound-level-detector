@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     screen_controller = ScreenController()
 
-    sound_listener = SoundListener(Settings.INITIAL_THRESHOLD, Settings.INITIAL_NOISE_LEVEL_BUFFER_SIZE, queue_events)
+    sound_listener = SoundListener(Settings.INITIAL_THRESHOLD, Settings.INITIAL_BUFFER_SIZE, queue_events)
     queue_listen = sound_listener.queue
 
     menu = Menu(screen_controller, queue_listen)
