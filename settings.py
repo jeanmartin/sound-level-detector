@@ -15,3 +15,4 @@ class Settings:
         'columns': 16,
         'rows': 2
     }
+    LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
