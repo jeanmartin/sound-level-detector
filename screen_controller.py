@@ -27,7 +27,7 @@ class ScreenController:
             for queue in self.queues:
                 event = queue.get()
                 self.update_screen(event[0], event[1], event[2])
-                self.queue.task_done()
+                queue.task_done()
             time.sleep(.001)
 
     def update_screen(self, column, row, text):
@@ -39,7 +39,7 @@ class ScreenController:
         if row+1 > self.ROWS or row < 0:
             print("ScreenController#update: row ({0}) out of range (0-{1})".format(row, self.ROWS-1))
             raise
-        if column+len(text) > self.COLUMN or column < 0:
+        if column+len(text) > self.COLUMNS or column < 0:
             print("ScreenController#update: column + text length ({0}) out of range (0-{1})".format(column+len(text), self.COLUMNS))
             raise
 

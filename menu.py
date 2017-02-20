@@ -3,19 +3,19 @@ from settings import Settings
 class Menu():
     OPTIONS = [
         { 'title': 'Threshold', 'key': 'threshold' },
-        { 'title': 'Noise Level Buffer size', 'key': 'noise_level_buffer_size' }
+        { 'title': 'Buffer size', 'key': 'buffer_size' }
     ]
     VALUES = {
         'threshold': Settings.INITIAL_THRESHOLD,
-        'noise_level_buffer_size': Settings.INITIAL_NOISE_LEVEL_BUFFER_SIZE
+        'buffer_size': Settings.INITIAL_NOISE_LEVEL_BUFFER_SIZE
     }
     VALUE_STEPS = {
         'threshold': 50,
-        'noise_level_buffer_size': 100
+        'buffer_size': 100
     }
     VALUE_RANGES = {
         'threshold': range(0, 1000),
-        'noise_level_buffer_size': range(1,25000)
+        'buffer_size': range(1,25000)
     }
     CURRENT = 0
 
@@ -24,14 +24,14 @@ class Menu():
         self.queue_listen = queue_listen
 
     def current_option(self):
-        self.OPTIONS[self.CURRENT]
+        return self.OPTIONS[self.CURRENT]
 
     def current_value(self):
         key = self.current_option()['key']
-        self.VALUES[key]
+        return self.VALUES[key]
 
     def current_value_text(self):
-        "{0}".format(self.current_value())
+        return "{0}".format(self.current_value())
 
     def next_option(self):
         self.CURRENT += 1

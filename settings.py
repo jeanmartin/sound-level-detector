@@ -11,7 +11,7 @@ class Settings:
         'LED_GREEN': 22,
         'LED_BLUE': 24
     }
-    SCREEN: {
+    SCREEN = {
         'columns': 16,
         'rows': 2
     }
