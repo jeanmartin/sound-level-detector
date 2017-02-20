@@ -2,13 +2,17 @@ from queue import Queue
 from threading import Thread, Lock
 from settings import Settings
 import LCD1602
-import sys, time
+import sys, time, logging
 
 class ScreenController:
     COLUMNS = Settings.SCREEN['columns']
     ROWS = Settings.SCREEN['rows']
 
     def __init__(self):
+        logging.basicConfig(format=Settings.LOG_FORMAT)
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+
         self.lock = Lock()
         LCD1602.init(0x27,1)
         self.queues = []
@@ -18,29 +22,33 @@ class ScreenController:
         self.start()
 
     def start(self):
-        self.thread = Thread(target=self.worker)
-        self.thread.daemon = True
-        self.thread.start()
+        self.threads = []
+        for row in range(self.ROWS):
+            thread = Thread(target=self.worker, args=[row])
+            thread.daemon = True
+            thread.start()
+            self.threads.append(thread)
 
-    def worker(self):
+    def worker(self, row):
+        self.logger.info('Starting queue {0}'.format(row))
+        queue = self.queues[row]
         while True:
-            for queue in self.queues:
-                event = queue.get()
-                self.update_screen(event[0], event[1], event[2])
-                queue.task_done()
-            time.sleep(.001)
+            event = queue.get()
+            self.update_screen(event[0], event[1], event[2])
+            queue.task_done()
 
     def update_screen(self, column, row, text):
         with self.lock:
-            LCD1602.write(row, 0, " " * self.COLUMNS)
-            LCD1602.write(row, column, text)
+            self.logger.info('Updating screen [{0}, {1}]: {2}'.format(column, row, text))
+            LCD1602.write(0, row, " " * self.COLUMNS)
+            LCD1602.write(column, row, text)
 
     def validate_column_and_row(self, column, row, text):
         if row+1 > self.ROWS or row < 0:
-            print("ScreenController#update: row ({0}) out of range (0-{1})".format(row, self.ROWS-1))
+            self.logger.error('row ({0}) out of range (0-{1})'.format(row, self.ROWS-1))
             raise
         if column+len(text) > self.COLUMNS or column < 0:
-            print("ScreenController#update: column + text length ({0}) out of range (0-{1})".format(column+len(text), self.COLUMNS))
+            self.logger.error('column + text length ({0}) out of range (0-{1})'.format(column+len(text), self.COLUMNS))
             raise
 
     def update(self, column, row, text):
