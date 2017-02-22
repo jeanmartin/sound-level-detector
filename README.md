@@ -36,7 +36,7 @@ Controls the LED strip. Provides methods to switch it on and off.
 
 * [ ] `sudo raspi-config`
 
-    - (optional) set keyboard layout
+    - (optional) set keyboard layout (`sudo reboot` after)
     - enable SSH by default (Advanced -> SSH -> YES)
 
 * [ ] `sudo apt-get install screen`
