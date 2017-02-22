@@ -54,7 +54,7 @@ Controls the LED strip. Provides methods to switch it on and off.
 
 * [ ] `sudo apt-get update`
 
-* [ ] `sudo apt-get install vim tmux htop python3 python3-pip screen`
+* [ ] `sudo apt-get install vim tmux htop python3 python3-pip screen git`
 
 * [ ] Apply screenrc
 
@@ -83,6 +83,8 @@ Controls the LED strip. Provides methods to switch it on and off.
     `sudo apt-get install python3-rpi.gpio`
 
 * [ ] `sudo pip3 install requests-futures`
+
+* [ ] `sudo apt-get install libasound2-dev`
 
 * [ ] `sudo pip3 install pyalsaaudio`
 
@@ -129,6 +131,15 @@ Controls the LED strip. Provides methods to switch it on and off.
     cd ~
     git clone https://github.com/testCloud/sound-level-detector.git SLD
     ```
+
+* [ ] Install and start init script for pigpiod
+
+   ```
+   cd /etc/init.d/
+   sudo wget https://raw.githubusercontent.com/testCloud/sound-level-detector/master/pigpiod.initd
+   sudo systemctl enable pigpiod
+   sudo systemctl start pigpiod
+   ```
 
 * [ ] start pigpiod
 
