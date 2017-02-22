@@ -39,7 +39,22 @@ Controls the LED strip. Provides methods to switch it on and off.
     - (optional) set keyboard layout (`sudo reboot` after)
     - enable SSH by default (Advanced -> SSH -> YES)
 
-* [ ] `sudo apt-get install screen`
+* [ ] `sudo vim.tiny /etc/wpa_supplicant/wpa_supplicant.conf`
+
+    Add this replacing SSID and Key:
+
+    ```
+    network={
+      ssid="<YOUR_SSID>"
+      psk="<YOUR_KEY>"
+    }
+    ```
+
+* [ ] `sudo dhcpcd wlan0`
+
+* [ ] `sudo apt-get update`
+
+* [ ] `sudo apt-get install vim tmux htop python3 python3-pip screen`
 
 * [ ] Apply screenrc
 
