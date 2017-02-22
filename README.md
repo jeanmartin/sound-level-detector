@@ -34,6 +34,11 @@ Controls the LED strip. Provides methods to switch it on and off.
 
 ## Setup
 
+* [ ] `sudo raspi-config`
+
+    - (optional) set keyboard layout
+    - enable SSH by default (Advanced -> SSH -> YES)
+
 * [ ] `sudo apt-get install screen`
 
 * [ ] Apply screenrc
