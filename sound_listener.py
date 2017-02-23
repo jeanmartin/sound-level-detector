@@ -78,14 +78,16 @@ class SoundListener:
                     avg = sum(self.buffer) / len(self.buffer)
                     if avg > self.threshold:
                         if not self.sound_on:
+                            self.logger.info('Over volume threshold')
                             self.sound_on = True
                             self.led_controller.led_on()
-                            self.event_queue.put(['over_volume_threshold', { 'threshold': self.threshold }])
+                            self.event_queue.put(['over_volume_threshold', { 'threshold': self.threshold, 'buffer_size': self.buffer_size }])
                     else:
                         if self.sound_on:
+                            self.logger.info('Below volume threshold')
                             self.sound_on = False
                             self.led_controller.led_off()
-                            self.event_queue.put(['below_volume_threshold', { 'threshold': self.threshold }])
+                            self.event_queue.put(['below_volume_threshold', { 'threshold': self.threshold, 'buffer_size': self.buffer_size }])
                     time.sleep(.001)
                 except audioop.error as e:
                     if "{0}".format(e) != "not a whole number of frames":

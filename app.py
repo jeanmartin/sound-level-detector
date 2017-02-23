@@ -11,11 +11,14 @@ from event_publisher import EventPublisher
 from screen_controller import ScreenController
 from sound_listener import SoundListener
 from menu import Menu
+from heartbeat import Heartbeat
 
 if __name__ == '__main__':
 
     event_publisher = EventPublisher()
     queue_events = event_publisher.queue
+
+    Heartbeat(event_publisher)
 
     screen_controller = ScreenController()
 
