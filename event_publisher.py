@@ -10,7 +10,7 @@ class EventPublisher:
     def __init__(self):
         logging.basicConfig(format=Settings.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(Settings.LOG_LEVEL)
 
         self.queue = Queue()
         self.start()

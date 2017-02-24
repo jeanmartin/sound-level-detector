@@ -1,3 +1,4 @@
+import logging
 
 class Settings:
     INITIAL_THRESHOLD = 500
@@ -16,3 +17,4 @@ class Settings:
         'rows': 2
     }
     LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    LOG_LEVEL = logging.INFO

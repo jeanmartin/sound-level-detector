@@ -11,7 +11,7 @@ class ScreenController:
     def __init__(self):
         logging.basicConfig(format=Settings.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(Settings.LOG_LEVEL)
 
         self.lock = Lock()
         LCD1602.init(0x27,1)

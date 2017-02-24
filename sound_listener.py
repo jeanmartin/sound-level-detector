@@ -10,7 +10,7 @@ class SoundListener:
     def __init__(self, threshold, buffer_size, event_queue):
         logging.basicConfig(format=Settings.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(Settings.LOG_LEVEL)
 
         self.event_queue = event_queue
 
