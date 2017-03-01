@@ -12,6 +12,7 @@ from screen_controller import ScreenController
 from sound_listener import SoundListener
 from menu import Menu
 from heartbeat import Heartbeat
+from distance_measurer import DistanceMeasurer
 
 if __name__ == '__main__':
 
@@ -22,10 +23,16 @@ if __name__ == '__main__':
 
     screen_controller = ScreenController()
 
+    DistanceMeasurer(screen_controller).start()
+
     sound_listener = SoundListener(Settings.INITIAL_THRESHOLD, Settings.INITIAL_BUFFER_SIZE, queue_events)
     queue_listen = sound_listener.queue
 
     menu = Menu(screen_controller, queue_listen)
+
+    # initial state
+    menu.update_screen()
+    screen_controller.turn_off_light()
 
     # Rotary Encoder 1 (Menu Select)
     re1_clk = Settings.GPIO['RE_1_CLK']

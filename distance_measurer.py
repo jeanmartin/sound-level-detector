@@ -4,13 +4,16 @@ import RPi.GPIO as GPIO
 import time, logging
 
 class DistanceMeasurer:
-    def __init__(self):
+    def __init__(self, screen_controller):
         logging.basicConfig(format=Settings.LOG_FORMAT)
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(Settings.LOG_LEVEL)
 
-        self.trig_pin = 19
-        self.echo_pin = 13
+        self.close = False
+        self.screen_controller = screen_controller
+
+        self.trig_pin = 23
+        self.echo_pin = 24
 
         GPIO.setmode(GPIO.BCM)
 
@@ -29,6 +32,16 @@ class DistanceMeasurer:
             distance = self.measure_distance()
             distance = round(distance, 2)
             self.logger.info('Measured {0}cm'.format(distance))
+            if distance < 100:
+                if not self.close:
+                    self.logger.info('Something is close !')
+                    self.close = True
+                    self.screen_controller.turn_on_light()
+            else:
+                if self.close:
+                    self.logger.info('It went away...')
+                    self.close = False
+                    self.screen_controller.turn_off_light()
 
     def measure_distance(self):
         GPIO.output(self.trig_pin, True)

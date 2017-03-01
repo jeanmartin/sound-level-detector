@@ -19,6 +19,7 @@ class ScreenController:
         # one queue per row
         for row in range(self.ROWS):
             self.queues.append(Queue())
+        self.light_queue = Queue()
         self.start()
 
     def start(self):
@@ -28,6 +29,9 @@ class ScreenController:
             thread.daemon = True
             thread.start()
             self.threads.append(thread)
+        self.light_thread = Thread(target=self.light_worker)
+        self.light_thread.deamon = True
+        self.light_thread.start()
 
     def worker(self, row):
         self.logger.info('Starting queue {0}'.format(row))
@@ -36,6 +40,22 @@ class ScreenController:
             event = queue.get()
             self.update_screen(event[0], event[1], event[2])
             queue.task_done()
+
+    def light_worker(self):
+        self.logger.info('Starting light worker')
+        while True:
+            event = self.light_queue.get()
+            if event == 'openlight':
+                self.logger.info('Turn off the light')
+                with self.lock:
+                    LCD1602.openlight()
+            elif event == 'closelight':
+                self.logger.info('Turn off the light')
+                with self.lock:
+                    LCD1602.closelight()
+            else:
+                self.logger.error('Unknown light command')
+            self.light_queue.task_done()
 
     def update_screen(self, column, row, text):
         with self.lock:
@@ -55,3 +75,9 @@ class ScreenController:
         self.validate_column_and_row(column, row, text)
         self.queues[row].queue.clear() # clear all screen updates for this row that are still pending
         self.queues[row].put([column, row, text])
+
+    def turn_on_light(self):
+        self.light_queue.put('openlight')
+
+    def turn_off_light(self):
+        self.light_queue.put('closelight')
