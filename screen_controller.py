@@ -46,7 +46,7 @@ class ScreenController:
         while True:
             event = self.light_queue.get()
             if event == 'openlight':
-                self.logger.info('Turn off the light')
+                self.logger.info('Turn on the light')
                 with self.lock:
                     LCD1602.openlight()
             elif event == 'closelight':

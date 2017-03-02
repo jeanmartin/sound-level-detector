@@ -31,15 +31,15 @@ class DistanceMeasurer:
             self.settle()
             distance = self.measure_distance()
             distance = round(distance, 2)
-            self.logger.info('Measured {0}cm'.format(distance))
+            # self.logger.info('Measured {0}cm'.format(distance))
             if distance < 100:
                 if not self.close:
-                    self.logger.info('Something is close !')
+                    self.logger.info('Something is close ! ({0}cm)'.format(distance))
                     self.close = True
                     self.screen_controller.turn_on_light()
             else:
                 if self.close:
-                    self.logger.info('It went away...')
+                    self.logger.info('It went away... ({0}cm)'.format(distance))
                     self.close = False
                     self.screen_controller.turn_off_light()
 
