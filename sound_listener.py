@@ -8,7 +8,7 @@ class SoundListener:
     CARD = 'front:CARD=GoMic,DEV=0'
 
     def __init__(self, threshold, buffer_size, event_queue):
-        logging.basicConfig(format=Settings.LOG_FORMAT)
+        logging.basicConfig(format=Settings.LOG_FORMAT, filename='log')
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(Settings.LOG_LEVEL)
 

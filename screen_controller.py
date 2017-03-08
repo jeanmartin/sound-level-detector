@@ -9,7 +9,7 @@ class ScreenController:
     ROWS = Settings.SCREEN['rows']
 
     def __init__(self):
-        logging.basicConfig(format=Settings.LOG_FORMAT)
+        logging.basicConfig(format=Settings.LOG_FORMAT, filename='log')
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(Settings.LOG_LEVEL)
 
