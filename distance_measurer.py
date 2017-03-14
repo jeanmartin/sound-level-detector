@@ -5,7 +5,7 @@ import time, logging
 
 class DistanceMeasurer:
     def __init__(self, screen_controller):
-        logging.basicConfig(format=Settings.LOG_FORMAT, filename='log')
+        logging.basicConfig(format=Settings.LOG_FORMAT, filename=Settings.LOG_FILE)
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(Settings.LOG_LEVEL)
 

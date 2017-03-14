@@ -13,7 +13,7 @@ class LEDController():
         self.led_off()
 
     def led_on(self):
-      self.PI.set_PWM_dutycycle(self.LED_R, 64)
+      self.PI.set_PWM_dutycycle(self.LED_R, 255)
       self.PI.set_PWM_dutycycle(self.LED_G, 0)
       self.PI.set_PWM_dutycycle(self.LED_B, 0)
 
