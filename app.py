@@ -19,7 +19,7 @@ if __name__ == '__main__':
     event_publisher = EventPublisher()
     queue_events = event_publisher.queue
 
-    Heartbeat(event_publisher)
+    Heartbeat('sound-level-detector', event_publisher)
 
     screen_controller = ScreenController()
 
