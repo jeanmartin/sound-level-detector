@@ -135,10 +135,10 @@ Controls the LED strip. Provides methods to switch it on and off.
 * [ ] Install and start init script for pigpiod
 
    ```
-     cd /etc/init.d/
-     sudo wget https://raw.githubusercontent.com/testCloud/sound-level-detector/master/pigpiod.initd
-     sudo systemctl enable pigpiod 
-     sudo systemctl start pigpiod
+   cd /etc/init.d/
+   sudo wget https://raw.githubusercontent.com/testCloud/sound-level-detector/master/pigpiod.initd
+   sudo systemctl enable pigpiod 
+   sudo systemctl start pigpiod
    ```
 
 * [ ] start pigpiod
